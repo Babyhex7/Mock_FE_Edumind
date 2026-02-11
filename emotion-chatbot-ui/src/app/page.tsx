@@ -110,7 +110,7 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, message]);
   };
 
-  const addMCQuestion = (questionData: typeof mcQuestions[0]) => {
+  const addMCQuestion = (questionData: (typeof mcQuestions)[0]) => {
     const message: Message = {
       id: Date.now().toString(),
       type: "mc",
@@ -145,7 +145,9 @@ export default function ChatPage() {
     setInputValue("");
 
     simulateThinking(() => {
-      addBotMessage("Terima kasih sudah berbagi ceritamu. Saya akan mengajukan beberapa pertanyaan untuk memahami kondisi emosionalmu lebih dalam.");
+      addBotMessage(
+        "Terima kasih sudah berbagi ceritamu. Saya akan mengajukan beberapa pertanyaan untuk memahami kondisi emosionalmu lebih dalam.",
+      );
       setTimeout(() => {
         simulateThinking(() => {
           addReflectionQuestion(reflectionQuestions[0]);
@@ -167,7 +169,9 @@ export default function ChatPage() {
       });
     } else {
       simulateThinking(() => {
-        addBotMessage("Baik, sekarang mari kita lanjut dengan beberapa pertanyaan pilihan.");
+        addBotMessage(
+          "Baik, sekarang mari kita lanjut dengan beberapa pertanyaan pilihan.",
+        );
         setTimeout(() => {
           simulateThinking(() => {
             addMCQuestion(mcQuestions[0]);
@@ -190,7 +194,9 @@ export default function ChatPage() {
       });
     } else {
       simulateThinking(() => {
-        addBotMessage("Analisis selesai. Berikut adalah insight berdasarkan jawabanmu:");
+        addBotMessage(
+          "Analisis selesai. Berikut adalah insight berdasarkan jawabanmu:",
+        );
         setTimeout(() => {
           simulateThinking(() => {
             addInsight();
@@ -226,8 +232,18 @@ export default function ChatPage() {
           <div className="max-w-3xl mx-auto flex items-center justify-center">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
                 </svg>
               </div>
               <span className="font-medium text-slate-700">EduMind</span>
@@ -240,15 +256,26 @@ export default function ChatPage() {
           <div className="w-full max-w-2xl text-center">
             <div className="mb-8">
               <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center shadow-lg">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                <svg
+                  className="w-8 h-8 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  />
                 </svg>
               </div>
               <h1 className="text-2xl font-semibold text-slate-800 mb-2">
                 Halo, ada yang ingin kamu ceritakan?
               </h1>
               <p className="text-slate-500 text-sm max-w-md mx-auto">
-                Saya akan membantu kamu memahami dan mengeksplorasi emosimu dengan lebih baik.
+                Saya akan membantu kamu memahami dan mengeksplorasi emosimu
+                dengan lebih baik.
               </p>
             </div>
 
@@ -268,8 +295,18 @@ export default function ChatPage() {
                 disabled={!inputValue.trim()}
                 className="absolute right-3 bottom-3 p-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
                 </svg>
               </button>
             </div>
@@ -295,9 +332,7 @@ export default function ChatPage() {
 
         {/* Footer */}
         <footer className="px-6 py-4 text-center">
-          <p className="text-xs text-slate-400">
-            Emotional Literacy Assistant
-          </p>
+          <p className="text-xs text-slate-400">Emotional Literacy Assistant</p>
         </footer>
       </main>
     );
@@ -311,18 +346,40 @@ export default function ChatPage() {
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
               </svg>
             </div>
-            <span className="font-medium text-slate-700 text-sm">EduMind Assistant</span>
+            <span className="font-medium text-slate-700 text-sm">
+              EduMind Assistant
+            </span>
           </div>
           <button
             onClick={restartChat}
             className="text-xs text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1.5"
           >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
             </svg>
             Mulai Ulang
           </button>
@@ -343,23 +400,47 @@ export default function ChatPage() {
               ) : message.type === "bot" ? (
                 <div className="flex gap-3">
                   <div className="w-7 h-7 rounded-lg bg-slate-800 flex-shrink-0 flex items-center justify-center mt-0.5">
-                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    <svg
+                      className="w-3.5 h-3.5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                      />
                     </svg>
                   </div>
                   <div className="flex-1 max-w-xl">
-                    <p className="text-sm text-slate-700 leading-relaxed">{message.content}</p>
+                    <p className="text-sm text-slate-700 leading-relaxed">
+                      {message.content}
+                    </p>
                   </div>
                 </div>
               ) : message.type === "reflection" ? (
                 <div className="flex gap-3">
                   <div className="w-7 h-7 rounded-lg bg-slate-800 flex-shrink-0 flex items-center justify-center mt-0.5">
-                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-3.5 h-3.5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                   </div>
                   <div className="flex-1 max-w-xl">
-                    <p className="text-sm text-slate-700 leading-relaxed mb-4">{message.content}</p>
+                    <p className="text-sm text-slate-700 leading-relaxed mb-4">
+                      {message.content}
+                    </p>
                     <div className="flex gap-2">
                       {message.options?.map((option) => (
                         <button
@@ -377,38 +458,61 @@ export default function ChatPage() {
               ) : message.type === "mc" ? (
                 <div className="flex gap-3">
                   <div className="w-7 h-7 rounded-lg bg-slate-800 flex-shrink-0 flex items-center justify-center mt-0.5">
-                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    <svg
+                      className="w-3.5 h-3.5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
                     </svg>
                   </div>
                   <div className="flex-1 max-w-xl">
-                    <p className="text-sm text-slate-700 leading-relaxed mb-4">{message.content}</p>
+                    <p className="text-sm text-slate-700 leading-relaxed mb-4">
+                      {message.content}
+                    </p>
                     <div className="space-y-2">
-                      {message.mcOptions && Object.entries(message.mcOptions).map(([key, value]) => (
-                        <button
-                          key={key}
-                          onClick={() => handleMCAnswer(`${key}. ${value}`)}
-                          disabled={flowState !== "mc"}
-                          className="w-full text-left px-4 py-3 text-sm rounded-xl border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
-                        >
-                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-slate-100 text-slate-600 font-medium mr-3 text-xs">{key}</span>
-                          {value}
-                        </button>
-                      ))}
+                      {message.mcOptions &&
+                        Object.entries(message.mcOptions).map(
+                          ([key, value]) => (
+                            <button
+                              key={key}
+                              onClick={() => handleMCAnswer(`${key}. ${value}`)}
+                              disabled={flowState !== "mc"}
+                              className="w-full text-left px-4 py-3 text-sm rounded-xl border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                            >
+                              <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-slate-100 text-slate-600 font-medium mr-3 text-xs">
+                                {key}
+                              </span>
+                              {value}
+                            </button>
+                          ),
+                        )}
                     </div>
                   </div>
                 </div>
               ) : message.type === "insight" ? (
                 <div className="flex gap-3">
                   <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex-shrink-0 flex items-center justify-center mt-0.5">
-                    <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      className="w-3.5 h-3.5 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   </div>
                   <div className="flex-1 max-w-xl">
                     <div className="bg-gradient-to-br from-slate-800 to-slate-900 px-5 py-5 rounded-2xl shadow-lg">
                       <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">Insight Emosional</span>
+                        <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">
+                          Insight Emosional
+                        </span>
                       </div>
                       <div className="text-sm text-slate-100 leading-relaxed whitespace-pre-line">
                         {message.content}
@@ -424,8 +528,18 @@ export default function ChatPage() {
           {isThinking && (
             <div className="flex gap-3 animate-message">
               <div className="w-7 h-7 rounded-lg bg-slate-800 flex-shrink-0 flex items-center justify-center mt-0.5">
-                <svg className="w-3.5 h-3.5 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                <svg
+                  className="w-3.5 h-3.5 text-white animate-pulse"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  />
                 </svg>
               </div>
               <div className="flex items-center gap-2 py-2">
@@ -434,7 +548,9 @@ export default function ChatPage() {
                   <div className="w-1.5 h-1.5 bg-slate-400 rounded-full thinking-dot"></div>
                   <div className="w-1.5 h-1.5 bg-slate-400 rounded-full thinking-dot"></div>
                 </div>
-                <span className="text-xs text-slate-400 ml-1">Sedang berpikir</span>
+                <span className="text-xs text-slate-400 ml-1">
+                  Sedang berpikir
+                </span>
               </div>
             </div>
           )}
@@ -447,9 +563,13 @@ export default function ChatPage() {
       <div className="bg-white/80 backdrop-blur-sm border-t border-slate-200 px-4 py-3">
         <div className="max-w-3xl mx-auto text-center">
           {flowState === "done" ? (
-            <p className="text-sm text-slate-500">Sesi telah selesai. Terima kasih telah berbagi.</p>
+            <p className="text-sm text-slate-500">
+              Sesi telah selesai. Terima kasih telah berbagi.
+            </p>
           ) : flowState === "reflection" || flowState === "mc" ? (
-            <p className="text-xs text-slate-400">Pilih salah satu jawaban di atas untuk melanjutkan</p>
+            <p className="text-xs text-slate-400">
+              Pilih salah satu jawaban di atas untuk melanjutkan
+            </p>
           ) : (
             <p className="text-xs text-slate-400">Memproses percakapan...</p>
           )}
@@ -458,4 +578,3 @@ export default function ChatPage() {
     </main>
   );
 }
-
