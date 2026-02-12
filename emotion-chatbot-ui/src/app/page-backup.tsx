@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Sidebar, { ChatSession } from "@/components/Sidebar";
+import Sidebar from "@/components/Sidebar";
+import { ChatSession } from "@/types";
 
 // Types
 type MessageType = "bot" | "user" | "reflection" | "mc" | "insight";
