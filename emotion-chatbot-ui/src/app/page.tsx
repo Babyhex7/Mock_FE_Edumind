@@ -212,59 +212,63 @@ export default function ChatPage() {
                 title: generateTitle(trimmed),
                 updatedAt: new Date(),
               }
-            : s
-        )
+            : s,
+        ),
       );
 
       // Clear input
       setInputValue("");
 
-    // Bot response
-    simulateThinking(() => {
-      const botMsg: ChatMessage = {
-        id: Date.now().toString() + Math.random(),
-        type: "bot",
-        content:
-          "Terima kasih sudah berbagi ceritamu. Saya akan mengajukan beberapa pertanyaan untuk memahami kondisi emosionalmu lebih dalam.",
-        timestamp: new Date(),
-      };
+      // Bot response
+      simulateThinking(() => {
+        const botMsg: ChatMessage = {
+          id: Date.now().toString() + Math.random(),
+          type: "bot",
+          content:
+            "Terima kasih sudah berbagi ceritamu. Saya akan mengajukan beberapa pertanyaan untuk memahami kondisi emosionalmu lebih dalam.",
+          timestamp: new Date(),
+        };
 
-      setSessions((prev) =>
-        prev.map((s) =>
-          s.id === activeSessionId
-            ? { ...s, messages: [...s.messages, botMsg], updatedAt: new Date() }
-            : s
-        )
-      );
+        setSessions((prev) =>
+          prev.map((s) =>
+            s.id === activeSessionId
+              ? {
+                  ...s,
+                  messages: [...s.messages, botMsg],
+                  updatedAt: new Date(),
+                }
+              : s,
+          ),
+        );
 
-      setTimeout(() => {
-        simulateThinking(() => {
-          const reflectionMsg: ChatMessage = {
-            id: Date.now().toString() + Math.random(),
-            type: "reflection",
-            content: reflectionQuestions[0],
-            options: ["Ya", "Tidak"],
-            answered: false,
-            timestamp: new Date(),
-          };
+        setTimeout(() => {
+          simulateThinking(() => {
+            const reflectionMsg: ChatMessage = {
+              id: Date.now().toString() + Math.random(),
+              type: "reflection",
+              content: reflectionQuestions[0],
+              options: ["Ya", "Tidak"],
+              answered: false,
+              timestamp: new Date(),
+            };
 
-          setSessions((prev) =>
-            prev.map((s) =>
-              s.id === activeSessionId
-                ? {
-                    ...s,
-                    messages: [...s.messages, reflectionMsg],
-                    flowState: "reflection",
-                    currentReflectionIndex: 0,
-                    updatedAt: new Date(),
-                  }
-                : s
-            )
-          );
-          setIsProcessing(false);
-        });
-      }, 500);
-    });
+            setSessions((prev) =>
+              prev.map((s) =>
+                s.id === activeSessionId
+                  ? {
+                      ...s,
+                      messages: [...s.messages, reflectionMsg],
+                      flowState: "reflection",
+                      currentReflectionIndex: 0,
+                      updatedAt: new Date(),
+                    }
+                  : s,
+              ),
+            );
+            setIsProcessing(false);
+          });
+        }, 500);
+      });
     }, 0);
   };
 
