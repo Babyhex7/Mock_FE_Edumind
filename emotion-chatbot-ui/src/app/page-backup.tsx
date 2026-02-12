@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
-import { ChatSession } from "@/types";
+import { ConversationSession } from "@/types";
 
 // Types
 type MessageType = "bot" | "user" | "reflection" | "mc" | "insight";
@@ -69,7 +69,7 @@ Ingat, memahami emosi adalah proses berkelanjutan. Terus eksplorasi dan kenali d
 export default function ChatPage() {
   // Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [sessions, setSessions] = useState<ConversationSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
   // Chat state
@@ -164,12 +164,16 @@ export default function ChatPage() {
 
   // Create new session
   const createNewSession = (firstMessage: string) => {
-    const newSession: ChatSession = {
+    const newSession: ConversationSession = {
       id: Date.now().toString(),
       title:
         firstMessage.slice(0, 30) + (firstMessage.length > 30 ? "..." : ""),
+      messages: [],
+      flowState: "idle",
+      currentReflectionIndex: 0,
+      currentMCIndex: 0,
       createdAt: new Date(),
-      isActive: true,
+      updatedAt: new Date(),
     };
     setSessions((prev) => [newSession, ...prev]);
     setCurrentSessionId(newSession.id);
