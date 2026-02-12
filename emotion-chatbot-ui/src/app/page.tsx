@@ -58,6 +58,8 @@ export default function ChatPage() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -71,7 +73,14 @@ export default function ChatPage() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [currentSession?.messages]);
+  }, [currentSession?.messages, isThinking]);
+
+  // Auto-focus input when session changes
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [currentSessionId]);
 
   // Generate title from first message
   const generateTitle = (firstMessage: string): string => {
@@ -97,11 +106,20 @@ export default function ChatPage() {
     return newSession;
   };
 
-  // Handle new chat
+  // Handle new chat - GPT style: just go to welcome screen, don't create session yet
   const handleNewChat = () => {
-    const newSession = createNewSession();
-    setSessions((prev) => [newSession, ...prev]);
-    setCurrentSessionId(newSession.id);
+    // If current session is empty (no messages), just stay there
+    if (currentSession && currentSession.messages.length === 0) {
+      setSidebarOpen(false);
+      setInputValue("");
+      return;
+    }
+
+    // Reset to welcome screen without creating a session
+    setCurrentSessionId(null);
+    setInputValue("");
+    setIsProcessing(false);
+    setIsThinking(false);
     setSidebarOpen(false);
   };
 
@@ -146,56 +164,108 @@ export default function ChatPage() {
 
   // Simulate thinking
   const simulateThinking = (callback: () => void, delay = 1500) => {
-    updateCurrentSession({ flowState: "reflection" });
+    setIsThinking(true);
     setTimeout(() => {
+      setIsThinking(false);
       callback();
     }, delay);
   };
 
-  // Handle start chat
+  // Can user type in the input? Only when idle, done, or no session (welcome)
+  const canTypeInput =
+    currentSession?.flowState === "idle" ||
+    currentSession?.flowState === "done" ||
+    !currentSession;
+
+  // Handle start chat - GPT style: create session on first message
   const handleStartChat = () => {
+    const trimmed = inputValue.trim();
+    if (!trimmed || isProcessing || isThinking) return;
+
+    // If no current session, create one first
+    let activeSessionId = currentSessionId;
     if (!currentSession) {
-      handleNewChat();
-      return;
+      const newSession = createNewSession();
+      setSessions((prev) => [newSession, ...prev]);
+      setCurrentSessionId(newSession.id);
+      activeSessionId = newSession.id;
     }
 
-    const inputValue = inputRef.current?.value.trim() || "";
-    if (!inputValue) return;
+    setIsProcessing(true);
 
-    // Add user message
-    addMessage({
-      type: "user",
-      content: inputValue,
-    });
+    // Use setTimeout to let the new session state settle
+    setTimeout(() => {
+      // Add user message directly via setSessions
+      const userMsg: ChatMessage = {
+        id: Date.now().toString() + Math.random(),
+        type: "user",
+        content: trimmed,
+        timestamp: new Date(),
+      };
 
-    // Clear input
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === activeSessionId
+            ? {
+                ...s,
+                messages: [...s.messages, userMsg],
+                title: generateTitle(trimmed),
+                updatedAt: new Date(),
+              }
+            : s
+        )
+      );
+
+      // Clear input
+      setInputValue("");
 
     // Bot response
     simulateThinking(() => {
-      addMessage({
+      const botMsg: ChatMessage = {
+        id: Date.now().toString() + Math.random(),
         type: "bot",
         content:
           "Terima kasih sudah berbagi ceritamu. Saya akan mengajukan beberapa pertanyaan untuk memahami kondisi emosionalmu lebih dalam.",
-      });
+        timestamp: new Date(),
+      };
+
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === activeSessionId
+            ? { ...s, messages: [...s.messages, botMsg], updatedAt: new Date() }
+            : s
+        )
+      );
 
       setTimeout(() => {
         simulateThinking(() => {
-          addMessage({
+          const reflectionMsg: ChatMessage = {
+            id: Date.now().toString() + Math.random(),
             type: "reflection",
             content: reflectionQuestions[0],
             options: ["Ya", "Tidak"],
             answered: false,
-          });
-          updateCurrentSession({
-            flowState: "reflection",
-            currentReflectionIndex: 0,
-          });
+            timestamp: new Date(),
+          };
+
+          setSessions((prev) =>
+            prev.map((s) =>
+              s.id === activeSessionId
+                ? {
+                    ...s,
+                    messages: [...s.messages, reflectionMsg],
+                    flowState: "reflection",
+                    currentReflectionIndex: 0,
+                    updatedAt: new Date(),
+                  }
+                : s
+            )
+          );
+          setIsProcessing(false);
         });
       }, 500);
     });
+    }, 0);
   };
 
   // Handle reflection answer
@@ -207,8 +277,8 @@ export default function ChatPage() {
     const message = currentSession.messages.find((m) => m.id === messageId);
     if (!message || message.answered) return;
 
-    // Check if current flow state is reflection
-    if (currentSession.flowState !== "reflection") return;
+    // Check if bot is still thinking
+    if (isThinking) return;
 
     setIsProcessing(true);
 
@@ -276,8 +346,8 @@ export default function ChatPage() {
     const message = currentSession.messages.find((m) => m.id === messageId);
     if (!message || message.answered) return;
 
-    // Check if current flow state is mc
-    if (currentSession.flowState !== "mc") return;
+    // Check if bot is still thinking
+    if (isThinking) return;
 
     setIsProcessing(true);
 
@@ -337,25 +407,26 @@ export default function ChatPage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleStartChat();
+      if (canTypeInput) {
+        handleStartChat();
+      }
     }
   };
 
-  // Initialize with one session on mount
-  useEffect(() => {
-    const initialSession = createNewSession();
-    setSessions([initialSession]);
-    setCurrentSessionId(initialSession.id);
-  }, []);
+  // Initialize - no session on mount (GPT style: start with welcome screen)
+  // Sessions are created when user sends first message
 
-  // Show welcome screen if no messages
-  const showWelcome = !currentSession?.messages.length;
+  // Show welcome screen if no session or no messages
+  const showWelcome = !currentSession || currentSession.messages.length === 0;
+
+  // Filter sessions for sidebar: only show sessions that have messages
+  const visibleSessions = sessions.filter((s) => s.messages.length > 0);
 
   return (
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar */}
       <Sidebar
-        sessions={sessions}
+        sessions={visibleSessions}
         currentSessionId={currentSessionId}
         onSelectSession={handleSelectSession}
         onNewChat={handleNewChat}
@@ -406,6 +477,8 @@ export default function ChatPage() {
                 <div className="relative">
                   <textarea
                     ref={inputRef}
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Ceritakan apa yang sedang kamu rasakan atau pikirkan..."
                     className="w-full resize-none border border-slate-200 rounded-2xl px-5 py-4 pr-14 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-transparent placeholder:text-slate-400 shadow-sm"
@@ -413,7 +486,8 @@ export default function ChatPage() {
                   />
                   <button
                     onClick={handleStartChat}
-                    className="absolute right-3 bottom-3 p-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-colors"
+                    disabled={!inputValue.trim() || isProcessing}
+                    className="absolute right-3 bottom-3 p-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <svg
                       className="w-4 h-4"
@@ -439,11 +513,7 @@ export default function ChatPage() {
                   ].map((suggestion) => (
                     <button
                       key={suggestion}
-                      onClick={() => {
-                        if (inputRef.current) {
-                          inputRef.current.value = suggestion;
-                        }
-                      }}
+                      onClick={() => setInputValue(suggestion)}
                       className="px-4 py-2 text-xs text-slate-600 bg-white border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all"
                     >
                       {suggestion}
@@ -520,8 +590,20 @@ export default function ChatPage() {
                       </div>
                     ) : message.type === "bot" ? (
                       <div className="flex gap-3">
-                        <div className="w-7 h-7 rounded-lg bg-slate-800 flex-shrink-0 flex items-center justify-center mt-0.5">
-                          <span className="text-sm">🤖</span>
+                        <div className="w-7 h-7 rounded-lg bg-slate-800 shrink-0 flex items-center justify-center mt-0.5">
+                          <svg
+                            className="w-3.5 h-3.5 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                            />
+                          </svg>
                         </div>
                         <div className="flex-1 max-w-xl">
                           <p className="text-sm text-slate-700 leading-relaxed">
@@ -558,9 +640,7 @@ export default function ChatPage() {
                                   handleReflectionAnswer(message.id, option)
                                 }
                                 disabled={
-                                  message.answered ||
-                                  isProcessing ||
-                                  currentSession?.flowState !== "reflection"
+                                  message.answered || isProcessing || isThinking
                                 }
                                 className="px-5 py-2 text-sm font-medium rounded-xl border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                               >
@@ -606,7 +686,7 @@ export default function ChatPage() {
                                     disabled={
                                       message.answered ||
                                       isProcessing ||
-                                      currentSession?.flowState !== "mc"
+                                      isThinking
                                     }
                                     className="w-full text-left px-4 py-3 text-sm rounded-xl border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                                   >
@@ -622,7 +702,7 @@ export default function ChatPage() {
                       </div>
                     ) : message.type === "insight" ? (
                       <div className="flex gap-3">
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex-shrink-0 flex items-center justify-center mt-0.5">
+                        <div className="w-7 h-7 rounded-lg bg-linear-to-br from-slate-700 to-slate-900 shrink-0 flex items-center justify-center mt-0.5">
                           <svg
                             className="w-3.5 h-3.5 text-white"
                             fill="currentColor"
@@ -632,7 +712,7 @@ export default function ChatPage() {
                           </svg>
                         </div>
                         <div className="flex-1 max-w-xl">
-                          <div className="bg-gradient-to-br from-slate-800 to-slate-900 px-5 py-5 rounded-2xl shadow-lg">
+                          <div className="bg-linear-to-br from-slate-800 to-slate-900 px-5 py-5 rounded-2xl shadow-lg">
                             <div className="flex items-center gap-2 mb-3">
                               <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">
                                 Insight Emosional
@@ -648,25 +728,112 @@ export default function ChatPage() {
                   </div>
                 ))}
 
+                {/* Thinking Indicator */}
+                {isThinking && (
+                  <div className="flex gap-3 animate-message">
+                    <div className="w-7 h-7 rounded-lg bg-slate-800 shrink-0 flex items-center justify-center mt-0.5">
+                      <svg
+                        className="w-3.5 h-3.5 text-white animate-pulse"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex items-center gap-2 py-2">
+                      <div className="flex gap-1">
+                        <div
+                          className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0ms" }}
+                        />
+                        <div
+                          className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "150ms" }}
+                        />
+                        <div
+                          className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "300ms" }}
+                        />
+                      </div>
+                      <span className="text-xs text-slate-400 ml-1">
+                        Sedang berpikir
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 <div ref={messagesEndRef} />
               </div>
             </div>
 
+            {/* Bottom Input / Status Bar */}
             <div className="bg-white/80 backdrop-blur-sm border-t border-slate-200 px-4 py-3">
-              <div className="max-w-3xl mx-auto text-center">
+              <div className="max-w-3xl mx-auto">
                 {currentSession?.flowState === "done" ? (
-                  <p className="text-sm text-slate-500">
-                    Sesi telah selesai. Terima kasih telah berbagi.
-                  </p>
+                  <div className="text-center">
+                    <p className="text-sm text-slate-500 mb-2">
+                      Sesi telah selesai. Terima kasih telah berbagi.
+                    </p>
+                    <button
+                      onClick={handleNewChat}
+                      className="text-xs text-slate-600 hover:text-slate-800 font-medium underline"
+                    >
+                      Mulai percakapan baru
+                    </button>
+                  </div>
                 ) : currentSession?.flowState === "reflection" ||
                   currentSession?.flowState === "mc" ? (
-                  <p className="text-xs text-slate-400">
-                    Pilih salah satu jawaban di atas untuk melanjutkan
-                  </p>
+                  <div className="text-center">
+                    <p className="text-xs text-slate-400">
+                      {isThinking
+                        ? "Bot sedang berpikir..."
+                        : "Pilih salah satu jawaban di atas untuk melanjutkan"}
+                    </p>
+                  </div>
                 ) : (
-                  <p className="text-xs text-slate-400">
-                    Memproses percakapan...
-                  </p>
+                  <div className="relative">
+                    <textarea
+                      ref={inputRef}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      disabled={!canTypeInput || isProcessing || isThinking}
+                      placeholder={
+                        isProcessing || isThinking
+                          ? "Menunggu respons..."
+                          : "Ceritakan apa yang sedang kamu rasakan..."
+                      }
+                      className="w-full resize-none border border-slate-200 rounded-2xl px-5 py-3 pr-14 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-transparent placeholder:text-slate-400 shadow-sm disabled:bg-slate-50 disabled:cursor-not-allowed"
+                      rows={2}
+                    />
+                    <button
+                      onClick={handleStartChat}
+                      disabled={
+                        !inputValue.trim() || isProcessing || isThinking
+                      }
+                      className="absolute right-3 bottom-2.5 p-2 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
