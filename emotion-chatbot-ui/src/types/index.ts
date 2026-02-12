@@ -92,6 +92,33 @@ export interface ChatSession {
 }
 
 // ============================================
+// CHAT UI TYPES
+// ============================================
+
+export type MessageType = "bot" | "user" | "reflection" | "mc" | "insight";
+
+export interface ChatMessage {
+  id: string;
+  type: MessageType;
+  content: string;
+  options?: string[];
+  mcOptions?: { A: string; B: string; C: string; D: string };
+  answered?: boolean; // Track if question has been answered
+  timestamp: Date;
+}
+
+export interface ConversationSession {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  flowState: "idle" | "story" | "reflection" | "mc" | "insight" | "done";
+  currentReflectionIndex: number;
+  currentMCIndex: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ============================================
 // PROGRESS TYPES
 // ============================================
 
