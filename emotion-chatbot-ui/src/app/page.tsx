@@ -255,21 +255,6 @@ export default function ChatPage() {
         <div className="flex-1 flex items-center justify-center px-4">
           <div className="w-full max-w-2xl text-center">
             <div className="mb-8">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center shadow-lg">
-                <svg
-                  className="w-8 h-8 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                  />
-                </svg>
-              </div>
               <h1 className="text-2xl font-semibold text-slate-800 mb-2">
                 Halo, ada yang ingin kamu ceritakan?
               </h1>
@@ -400,19 +385,7 @@ export default function ChatPage() {
               ) : message.type === "bot" ? (
                 <div className="flex gap-3">
                   <div className="w-7 h-7 rounded-lg bg-slate-800 flex-shrink-0 flex items-center justify-center mt-0.5">
-                    <svg
-                      className="w-3.5 h-3.5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                      />
-                    </svg>
+                    <span className="text-sm">🤖</span>
                   </div>
                   <div className="flex-1 max-w-xl">
                     <p className="text-sm text-slate-700 leading-relaxed">
@@ -528,19 +501,7 @@ export default function ChatPage() {
           {isThinking && (
             <div className="flex gap-3 animate-message">
               <div className="w-7 h-7 rounded-lg bg-slate-800 flex-shrink-0 flex items-center justify-center mt-0.5">
-                <svg
-                  className="w-3.5 h-3.5 text-white animate-pulse"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                  />
-                </svg>
+                <span className="text-sm animate-pulse">🤖</span>
               </div>
               <div className="flex items-center gap-2 py-2">
                 <div className="flex gap-1">
