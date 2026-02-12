@@ -3,6 +3,7 @@
 ## Persiapan
 
 Project Next.js ini sudah siap untuk di-deploy ke Vercel dengan konfigurasi:
+
 - ✅ Package.json dengan build scripts
 - ✅ Next.js 16.1.6
 - ✅ TypeScript
@@ -15,6 +16,7 @@ Project Next.js ini sudah siap untuk di-deploy ke Vercel dengan konfigurasi:
 ### Opsi 1: Deploy via Vercel Dashboard (Recommended)
 
 1. **Push code ke Git repository**
+
    ```bash
    cd emotion-chatbot-ui
    git add .
@@ -50,16 +52,19 @@ Project Next.js ini sudah siap untuk di-deploy ke Vercel dengan konfigurasi:
 ### Opsi 2: Deploy via Vercel CLI
 
 1. **Install Vercel CLI**
+
    ```bash
    npm i -g vercel
    ```
 
 2. **Login**
+
    ```bash
    vercel login
    ```
 
 3. **Deploy**
+
    ```bash
    cd emotion-chatbot-ui
    vercel
@@ -73,6 +78,7 @@ Project Next.js ini sudah siap untuk di-deploy ke Vercel dengan konfigurasi:
 ## Auto-Deploy
 
 Setelah setup awal, setiap push ke branch `main` akan otomatis trigger deployment baru:
+
 - Push ke `main` → Production deployment
 - Push ke branch lain → Preview deployment
 
@@ -92,27 +98,32 @@ Setelah setup awal, setiap push ke branch `main` akan otomatis trigger deploymen
 ## Troubleshooting
 
 ### Build Error
+
 - Cek logs di Vercel Dashboard
 - Pastikan `npm run build` berjalan sukses di local
 - Cek environment variables
 
 ### Module Not Found
+
 - Pastikan semua dependencies ada di `package.json`
 - Bukan di `devDependencies` jika digunakan di runtime
 
 ### Environment Variables
+
 - Set di Vercel Dashboard → Project Settings → Environment Variables
 - Redeploy setelah menambah/mengubah env vars
 
 ## Preview URL
 
 Setelah deployment, Anda akan mendapat:
+
 - **Production URL**: `https://your-project.vercel.app`
 - **Preview URL**: `https://your-project-git-branch.vercel.app` (untuk setiap branch)
 
 ---
 
 **Note**: Vercel secara otomatis optimize Next.js deployment dengan:
+
 - Edge caching
 - Image optimization
 - Automatic HTTPS
